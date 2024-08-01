@@ -70,10 +70,10 @@ def run_infinite_post_data_loop():
             print(pin_result)
             print('\n## geo_result ##')
             #print(Counter(geo_result).most_common(3))
-            print(pin_result)
+            print(geo_result)
             print('\n## user_result ##')
             #print(Counter(user_result).most_common(3))
-            print(pin_result)
+            print(user_result)
 
 if __name__ == "__main__":
     run_infinite_post_data_loop()
