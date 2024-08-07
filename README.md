@@ -199,7 +199,7 @@ AWS EC2 is cloud hosted server that can be created within the MSK Cluster and co
         __Access permissions__, where you should select the IAM role you have created previously
         Skip the rest of the pages until you get to Create connector button page. Once your connector is up and running you will be able to visualise it in the Connectors tab in the MSK console.
 
-    - Configure an API in AWS API Gateway
+    - Configure an proxy API in AWS API Gateway
         - Create an new API in AWS API Gateway, give it the name <chosen_prefix>-api
         - Create a new resource with Resource path equals to / and Resource name equal to {proxy+}
         - Edit integration, an select HTTP, and for HTTP method select ANY. It is important to edit that the Endpoint URL so that it captures
@@ -237,15 +237,15 @@ AWS EC2 is cloud hosted server that can be created within the MSK Cluster and co
             # The SASL client bound by "sasl.jaas.config" invokes this class.
             client.sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler
             ```
-            - Deploy the API, and note down the environment name <env>, you have chosen 
+        - go back to AWS and deploy the <chosen_prefix>-api API in AWS Console, and note down the environment name <env>, you have chosen 
             - Note down the Invoke URL. The url should look like this:
             'https://<invoke-url-sub-domain>.amazonaws.com/<env>/topics/<chosen_prefix>.pin'
 
-            - To send messages to the API Gateway, you need to start the REST proxy, by running the following command, like so:
-                - cd confluent-7.2.0/bin
-                - ./kafka-rest-start /home/ec2-user/confluent-7.2.0/etc/kafka-rest/kafka-rest.properties
+        - To send messages to the API Gateway, you need to start the REST proxy, by running the following command, like so:
+            - cd confluent-7.2.0/bin
+            - ./kafka-rest-start /home/ec2-user/confluent-7.2.0/etc/kafka-rest/kafka-rest.properties
 
-            - The python code to send events to the proxy server are:
+        - The python code to send events to the proxy server are:
             ```
             headers = {'Content-Type': 'application/vnd.kafka.json.v2+json'}
             invoke_url = 'https://<invoke-url-sub-domain>.amazonaws.com/<env>/topics/<chosen_prefix>.pin'
@@ -261,9 +261,18 @@ AWS EC2 is cloud hosted server that can be created within the MSK Cluster and co
             response = requests.post(invoke_url, headers=headers, data=payload)
             print(response.json)
             ```
-            - Running the above code for the first time, should result into seeig those Kafka Topics appearing in the S3 bucket.
+        - Running the above code for the first time, should result into seeig those Kafka Topics appearing in the S3 bucket, like so:
+        topics/<your_UserId>.pin/partition=0/
 
-        
+    - Setting Up Databricks to Read Kafka Topics from S3:
+        - Set you a new Databricks account, if you don't have one
+        - Configure Databricks to store the S3 access_key and secret_key credentials
+            - Download S3 credentials.csv file from AWS console
+            - In the Databricks UI, click the Catalog icon and then click + Add --> Add data button.
+            - Click on Create or modify table and then drop the credentials file you have just downloaded from AWS. Once the file has been successfully uploaded, click Create table to finalize the process.
+            - The S3 credentials will be uploaded and available to access in the following location: *dbfs:/user/hive/warehouse/*
+            - see Load S3 Topics to DF IPython notebook for how you would authenticate t0 AWS S3 and load data from the Kafka topics stored in this S3 bucket.
+    
 # File structure
 The directory includes a number of files:
 - __file.py__: This file is the main file to use for running selected components of the pipeline, or the entire pipeline at once.
