@@ -199,10 +199,71 @@ AWS EC2 is cloud hosted server that can be created within the MSK Cluster and co
         __Access permissions__, where you should select the IAM role you have created previously
         Skip the rest of the pages until you get to Create connector button page. Once your connector is up and running you will be able to visualise it in the Connectors tab in the MSK console.
 
+    - Configure an API in AWS API Gateway
+        - Create an new API in AWS API Gateway, give it the name <chosen_prefix>-api
+        - Create a new resource with Resource path equals to / and Resource name equal to {proxy+}
+        - Edit integration, an select HTTP, and for HTTP method select ANY. It is important to edit that the Endpoint URL so that it captures
+            - EC2 Instance Public DNS, plus
+            - port and proxy resource type
+            combined together like this: http://KafkaClientEC2InstancePublicDNS:8082/{proxy}
+        - Install Confluent package for REST proxy on EC2
+            - SSH login to EC2
+            - Run the following commands
+                - sudo wget https://packages.confluent.io/archive/7.2/confluent-7.2.0.tar.gz
+                - tar -xvzf confluent-7.2.0.tar.gz
+            - Configure the REST proxy to communicate with the MSK cluster and perform IAM authentication, run the following commands:
+                - cd confluent-7.2.0/etc/kafka-rest
+                - nano kafka-rest.properties
+            - Modify the Boostrap server string and Plaintext Apache Zookeeper connection string respectively in your kfka-rest.properties file to capture the MSK cluster Bootstap server string and Apache Zookeepr connection string
+            ```
+            #schema.registry.url=http://localhost:8081
+            zookeeper.connect=<Apache Zookeeper connetion (Plaintext)>
+            #localhost:2181
+            bootstrap.servers=<MSK Private Endpoint (single-VPC)>
+            #PLAINTEXT://localhost:9092
+            ```
+            - Add the following configurations at the bottom of the file, and replace <Your Access Role> with the role name from first steps:
+            ```
+            # Sets up TLS for encryption and SASL for authN.
+            client.security.protocol = SASL_SSL
 
--  
+            # Identifies the SASL mechanism to use.
+            client.sasl.mechanism = AWS_MSK_IAM
 
+            # Binds SASL client implementation.
+            client.sasl.jaas.config = software.amazon.msk.auth.iam.IAMLoginModule required awsRoleArn="<Your Access Role>";
 
+            # Encapsulates constructing a SigV4 signature based on extracted credentials.
+            # The SASL client bound by "sasl.jaas.config" invokes this class.
+            client.sasl.client.callback.handler.class = software.amazon.msk.auth.iam.IAMClientCallbackHandler
+            ```
+            - Deploy the API, and note down the environment name <env>, you have chosen 
+            - Note down the Invoke URL. The url should look like this:
+            'https://<invoke-url-sub-domain>.amazonaws.com/<env>/topics/<chosen_prefix>.pin'
+
+            - To send messages to the API Gateway, you need to start the REST proxy, by running the following command, like so:
+                - cd confluent-7.2.0/bin
+                - ./kafka-rest-start /home/ec2-user/confluent-7.2.0/etc/kafka-rest/kafka-rest.properties
+
+            - The python code to send events to the proxy server are:
+            ```
+            headers = {'Content-Type': 'application/vnd.kafka.json.v2+json'}
+            invoke_url = 'https://<invoke-url-sub-domain>.amazonaws.com/<env>/topics/<chosen_prefix>.pin'
+            payload = json.dumps({
+                                "records": [
+                                    {
+                                    #Data should be send as pairs of column_name:value, with different columns separated by commas       
+                                    "value": pin_result
+                                    }
+                                ]
+                            }, default=str)
+            print(payload)
+            response = requests.post(invoke_url, headers=headers, data=payload)
+            print(response.json)
+            ```
+            - Running the above code for the first time, should result into seeig those Kafka Topics appearing in the S3 bucket.
+
+        
 # File structure
 The directory includes a number of files:
 - __file.py__: This file is the main file to use for running selected components of the pipeline, or the entire pipeline at once.

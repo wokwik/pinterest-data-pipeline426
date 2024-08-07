@@ -38,8 +38,15 @@ new_connector = AWSDBConnector()
 
 def run_infinite_post_data_loop():
     from collections import Counter
+    
+    choice = 'y'
 
-    while True:
+    while choice == 'y':
+
+        choice = input("Another run? (y/n): ")
+        if choice != 'y':
+            break
+
         sleep(random.randrange(0, 2))
         random_row = random.randint(0, 11000)
         engine = new_connector.create_db_connector()
@@ -63,22 +70,58 @@ def run_infinite_post_data_loop():
             
             for row in user_selected_row:
                 user_result = dict(row._mapping)
-            
 
             print('\n## pin_result ##')
             #print(Counter(pin_result).most_common(3))
             print(pin_result)
+            headers = {'Content-Type': 'application/vnd.kafka.json.v2+json'}
+            invoke_url = 'https://cvv4sqxyja.execute-api.us-east-1.amazonaws.com/Production/topics/0affec486183.pin'
+            payload = json.dumps({
+                                "records": [
+                                    {
+                                    #Data should be send as pairs of column_name:value, with different columns separated by commas       
+                                    "value": pin_result
+                                    }
+                                ]
+                            }, default=str)
+            print(payload)
+            response = requests.post(invoke_url, headers=headers, data=payload)
+            print(response.json)
+
             print('\n## geo_result ##')
             #print(Counter(geo_result).most_common(3))
             print(geo_result)
+            invoke_url = 'https://cvv4sqxyja.execute-api.us-east-1.amazonaws.com/Production/topics/0affec486183.geo'
+            payload = json.dumps({
+                                "records": [
+                                    {
+                                    #Data should be send as pairs of column_name:value, with different columns separated by commas       
+                                    "value": geo_result
+                                    }
+                                ]
+                            }, default=str)
+            print(payload)
+            response = requests.post(invoke_url, headers=headers, data=payload)
+            print(response.json)
+
             print('\n## user_result ##')
             #print(Counter(user_result).most_common(3))
             print(user_result)
+            invoke_url = 'https://cvv4sqxyja.execute-api.us-east-1.amazonaws.com/Production/topics/0affec486183.user'
+            payload = json.dumps({
+                                "records": [
+                                    {
+                                    #Data should be send as pairs of column_name:value, with different columns separated by commas       
+                                    "value": user_result
+                                    }
+                                ]
+                            }, default=str)
+            print(payload)
+            response = requests.post(invoke_url, headers=headers, data=payload)
+            print(response.json)
 
 if __name__ == "__main__":
     run_infinite_post_data_loop()
     print('Working')
-    
-    
 
 
