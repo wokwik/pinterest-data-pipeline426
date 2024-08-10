@@ -271,8 +271,53 @@ AWS EC2 is cloud hosted server that can be created within the MSK Cluster and co
             - In the Databricks UI, click the Catalog icon and then click + Add --> Add data button.
             - Click on Create or modify table and then drop the credentials file you have just downloaded from AWS. Once the file has been successfully uploaded, click Create table to finalize the process.
             - The S3 credentials will be uploaded and available to access in the following location: *dbfs:/user/hive/warehouse/*
-            - see Load S3 Topics to DF IPython notebook for how you would authenticate t0 AWS S3 and load data from the Kafka topics stored in this S3 bucket.
-    
+            ```
+            # Read the Delta table to a Spark DataFrame
+            aws_keys_df = spark.read.format("delta").load("dbfs:/user/hive/warehouse/authentication_credentials")
+            # Get the AWS access key and secret key from the spark dataframe
+            ACCESS_KEY = aws_keys_df.select('Access key ID').collect()[0]['Access key ID']
+            SECRET_KEY = aws_keys_df.select('Secret access key').collect()[0]['Secret access key']
+            # Encode the secret key
+            ENCODED_SECRET_KEY = urllib.parse.quote(string=SECRET_KEY, safe="")
+            ```
+        - You can then mount the S3 bucket using this code:
+        ```
+        # AWS S3 bucket name
+        AWS_S3_BUCKET = "<prefix>-bucket"
+        # Mount a chosen path name for the bucket
+        MOUNT_PATH = "/mnt/mount_path"
+        # Source url
+        SOURCE_URL = "s3n://{0}:{1}@{2}".format(ACCESS_KEY, ENCODED_SECRET_KEY, AWS_S3_BUCKET)
+        # Mount the drive
+        dbutils.fs.mount(SOURCE_URL, MOUNT_PATH)
+        ```
+        - see file.ipthon notebook for how you would use this setup to authenticate to AWS S3 and load data from the Kafka topics stored in this S3 bucket.
+
+    - Data Analysis using PySpark
+        - file.ipthon shows the code for loading the three topics into separate PySpark dataframe (df_pin, df_geo, df_user)
+
+        - Disable format checks during the reading of delta tables:
+        ```
+        %sql
+        --Disable format checks during the reading of Delta tables
+        SET spark.databricks.delta.formatCheck.enabled=false
+        ```
+        - Load a dataframe like this
+        ```
+        # File location and type
+        # Asterisk(*) indicates reading all the content of the specified file that have .json extension
+        file_location = "/mnt/mount_path/topics/0affec486183.pin/partition=0/*.json"
+        file_type = "json"
+        # Ask Spark to infer the schema
+        infer_schema = "true"
+        # Read in JSONs from mounted S3 bucket
+        df_pin = spark.read.format(file_type).option("inferSchema", infer_schema).load(file_location)
+        # Display Spark dataframe to check its content
+        display(df_pin)
+        ```
+
+        - PySpark is then used to clean, tidy, and analyse the data for insights. The included file.ipython file has the full sourcecode for reference.
+
 # File structure
 The directory includes a number of files:
 - __file.py__: This file is the main file to use for running selected components of the pipeline, or the entire pipeline at once.

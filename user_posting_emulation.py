@@ -43,7 +43,7 @@ def run_infinite_post_data_loop():
 
     while choice == 'y':
 
-        choice = input("Another run? (y/n): ")
+        #choice = input("Another run? (y/n): ")
         if choice != 'y':
             break
 
