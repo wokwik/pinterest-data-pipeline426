@@ -39,7 +39,7 @@ with DAG('0affec486183_dag',
         task_id='submit_run',
         # the connection we set-up previously
         databricks_conn_id='databricks_default',
-        existing_cluster_id='1108-162752-8okw8dgg',
+        existing_cluster_id='1108-162752-8okw8dgg', # from Databricks Computer Resource => Configuration => expand: Automatically added tags # or find in json configuration file
         notebook_task=notebook_task
     )
     opr_submit_run
