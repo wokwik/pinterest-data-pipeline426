@@ -3,3 +3,4 @@ db_creds*.yaml
 data/
 .DS_Store
 __pycache__/
+save_data.py
