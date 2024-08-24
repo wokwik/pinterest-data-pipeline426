@@ -24,6 +24,12 @@ Databricks is a powerful solution for managing data at scale, offering a compreh
 
 Databricks is built upon *Apache Spark*, a powerful open-source distributed computing system that enables parallel processing of large datasets.
 
+# Architecture Diagram
+
+This diagram summarises the architecture:
+
+![Alt text](CloudPinterestPipeline%20-%20architecture%20diagram.png?raw=true "Architecture Diagram - Pinterest Lambda Architecture")
+
 # Installation instruction
 
 ## Create a Batch Processing Pipeline
