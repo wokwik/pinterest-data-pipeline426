@@ -490,6 +490,7 @@ This diagram summarises the architecture:
                 }
                 ```
         C- Add records to streams in Kinesis
+        
             - Under the `{stream-name}` resource create a two new child resources with the **Resource Name**, `record` and `records`. For both resources create a `PUT` method.
             - Setting up the record `PUT` method.
                 1. In the **Create method** page you will need to define the following:
