@@ -368,6 +368,7 @@ This diagram summarises the architecture:
     role name should be <chosen_prefix>-Kinesis-policy
     
     - Configure EC2 instance RESt API to invoke Kinesis actions:
+
     1- List streams
         - Navigate to the **Resources** tab of the previously created API. Use the **Create resource**
         - Under **Resource Name**, type **streams**. Leave the rest as default and then click the **Create resource** button
@@ -392,6 +393,7 @@ This diagram summarises the architecture:
             - Under **Content-Type** type **application/json**
             - Under **Template body** type `{}` in the template editor
         - Click on the **Save** button to save the changes
+        
     2- Create, describe and delete streams in Kinesis
         - Navigate to **Resources** tab of the previously created API. Under the `streams` resource create a new child resource with the **Resource name** `{stream-name}`.
         - Create the following three **Methods** for `{stream-name}` resource: `POST`, `GET` and `DELETE`.
