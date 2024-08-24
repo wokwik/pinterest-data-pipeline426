@@ -369,196 +369,196 @@ This diagram summarises the architecture:
     
     - Configure EC2 instance RESt API to invoke Kinesis actions:
 
-    A- List streams
+        A- List streams
 
-        - Navigate to the **Resources** tab of the previously created API. Use the **Create resource**
-        - Under **Resource Name**, type **streams**. Leave the rest as default and then click the **Create resource** button
-        
-        - Choose the created **streams** resource, and then select the **Create method** button. Select `GET` as the method type.
-        - For **Integration type** select **AWS Service**
-        - For **AWS Region** choose *us-east-1*
-        - For **AWS Service** select **Kinesis**,
-        - For **HTTP method** select `POST` (as we will have to invoke Kinesis's `ListStreams` action)
-        - For **Action Type** select **User action name**
-        - For **Action name** type `ListStreams`
-        - For **Execution role** you should copy the ARN of your Kinesis Access Role (created in the previous section)
-        - Finally, click **Create method** to finalize provisioning this method
-
-        - Go to the **Method Execution** page. From here select the **Integration request** panel, click on the **Edit** button at the bottom of the page.
-        - Expand the **URL request headers parameters** panel and select the following options:
-            - Under **Name** type **Content-Type**
-            - Under **Mapped form** type **'application/x-amz-json-1.1'**
-            - Click the **Add request header parameter** button
-        - Expand the **Mapping Templates** panel and select the following options:
-            - Choose **Add mapping template** button
-            - Under **Content-Type** type **application/json**
-            - Under **Template body** type `{}` in the template editor
-        - Click on the **Save** button to save the changes
-        
-    B- Create, describe and delete streams in Kinesis
-
-        - Navigate to **Resources** tab of the previously created API. Under the `streams` resource create a new child resource with the **Resource name** `{stream-name}`.
-        - Create the following three **Methods** for `{stream-name}` resource: `POST`, `GET` and `DELETE`.
-        - Setting up the `GET` method.
-            1. In the **Create method** page you will need to define the following:
-
+            - Navigate to the **Resources** tab of the previously created API. Use the **Create resource**
+            - Under **Resource Name**, type **streams**. Leave the rest as default and then click the **Create resource** button
+            
+            - Choose the created **streams** resource, and then select the **Create method** button. Select `GET` as the method type.
             - For **Integration type** select **AWS Service**
-            - For **AWS Region** choose us-east-1
-            - For **AWS Service** select **Kinesis**
-            - For **HTTP method** select `POST`
+            - For **AWS Region** choose *us-east-1*
+            - For **AWS Service** select **Kinesis**,
+            - For **HTTP method** select `POST` (as we will have to invoke Kinesis's `ListStreams` action)
             - For **Action Type** select **User action name**
-            - For **Action name** type `DescribeStream`
-            - For **Execution role** you should use the same ARN as in the previous step
+            - For **Action name** type `ListStreams`
+            - For **Execution role** you should copy the ARN of your Kinesis Access Role (created in the previous section)
+            - Finally, click **Create method** to finalize provisioning this method
 
-            Finally, click **Create method**. This will redirect you to the **Method Execution** page.
+            - Go to the **Method Execution** page. From here select the **Integration request** panel, click on the **Edit** button at the bottom of the page.
+            - Expand the **URL request headers parameters** panel and select the following options:
+                - Under **Name** type **Content-Type**
+                - Under **Mapped form** type **'application/x-amz-json-1.1'**
+                - Click the **Add request header parameter** button
+            - Expand the **Mapping Templates** panel and select the following options:
+                - Choose **Add mapping template** button
+                - Under **Content-Type** type **application/json**
+                - Under **Template body** type `{}` in the template editor
+            - Click on the **Save** button to save the changes
+            
+        B- Create, describe and delete streams in Kinesis
 
-            2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
+            - Navigate to **Resources** tab of the previously created API. Under the `streams` resource create a new child resource with the **Resource name** `{stream-name}`.
+            - Create the following three **Methods** for `{stream-name}` resource: `POST`, `GET` and `DELETE`.
+            - Setting up the `GET` method.
+                1. In the **Create method** page you will need to define the following:
 
-            - Click on the **Add request header parameter** button
-            - Under **Name** type **Content-Type**
-            - Under **Mapped form** type **'application/x-amz-json-1.1'**
+                - For **Integration type** select **AWS Service**
+                - For **AWS Region** choose us-east-1
+                - For **AWS Service** select **Kinesis**
+                - For **HTTP method** select `POST`
+                - For **Action Type** select **User action name**
+                - For **Action name** type `DescribeStream`
+                - For **Execution role** you should use the same ARN as in the previous step
 
-            3. Expand the **Mapping Ttemplates** panel and select the following options:
+                Finally, click **Create method**. This will redirect you to the **Method Execution** page.
 
-            - Click on the **Add mapping template** button
-            - Under **Cotent-Type** type **application/json**
-            - In the **Template body** include the following: 
-            ```
-            {
-                "StreamName": "$input.params('stream-name')"
-            }
-            ```
+                2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
 
-        - Setting up the `POST` method.
-            1. In the **Create method** page you will need to define the following:
+                - Click on the **Add request header parameter** button
+                - Under **Name** type **Content-Type**
+                - Under **Mapped form** type **'application/x-amz-json-1.1'**
 
-            - For **Integration type** select **AWS Service**
-            - For **AWS Region** choose us-east-1
-            - For **AWS Service** select **Kinesis**
-            - For **HTTP method** select `POST`
-            - For **Action Type** select **User action name**
-            - For **Action name** type `CreateStream`
-            - For **Execution role** you should use the same ARN as in the previous step
+                3. Expand the **Mapping Ttemplates** panel and select the following options:
 
-            Finally, click **Create method**. This will redirect you to the **Method Execution** page.
+                - Click on the **Add mapping template** button
+                - Under **Cotent-Type** type **application/json**
+                - In the **Template body** include the following: 
+                ```
+                {
+                    "StreamName": "$input.params('stream-name')"
+                }
+                ```
 
-            2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
+            - Setting up the `POST` method.
+                1. In the **Create method** page you will need to define the following:
 
-            - Click on the **Add request header parameter** button
-            - Under **Name** type **Content-Type**
-            - Under **Mapped form** type **'application/x-amz-json-1.1'**
+                - For **Integration type** select **AWS Service**
+                - For **AWS Region** choose us-east-1
+                - For **AWS Service** select **Kinesis**
+                - For **HTTP method** select `POST`
+                - For **Action Type** select **User action name**
+                - For **Action name** type `CreateStream`
+                - For **Execution role** you should use the same ARN as in the previous step
 
-            3. Expand the **Mapping Ttemplates** panel and select the following options:
+                Finally, click **Create method**. This will redirect you to the **Method Execution** page.
 
-            - Click on the **Add mapping template** button
-            - Under **Cotent-Type** type **application/json**
-            - In the **Template body** include the following: 
-            ```
-            {
-                "ShardCount": #if($input.path('$.ShardCount') == '') 5 #else $input.path('$.ShardCount') #end,
-                "StreamName": "$input.params('stream-name')"
-            }
-            ```
+                2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
 
-        - Setting up the `DELETE` method.
-            1. In the **Create method** page you will need to define the following:
+                - Click on the **Add request header parameter** button
+                - Under **Name** type **Content-Type**
+                - Under **Mapped form** type **'application/x-amz-json-1.1'**
 
-            - For **Integration type** select **AWS Service**
-            - For **AWS Region** choose us-east-1
-            - For **AWS Service** select **Kinesis**
-            - For **HTTP method** select `POST`
-            - For **Action Type** select **User action name**
-            - For **Action name** type `DeleteStream`
-            - For **Execution role** you should use the same ARN as in the previous step
+                3. Expand the **Mapping Ttemplates** panel and select the following options:
 
-            Finally, click **Create method**. This will redirect you to the **Method Execution** page.
+                - Click on the **Add mapping template** button
+                - Under **Cotent-Type** type **application/json**
+                - In the **Template body** include the following: 
+                ```
+                {
+                    "ShardCount": #if($input.path('$.ShardCount') == '') 5 #else $input.path('$.ShardCount') #end,
+                    "StreamName": "$input.params('stream-name')"
+                }
+                ```
 
-            2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
+            - Setting up the `DELETE` method.
+                1. In the **Create method** page you will need to define the following:
 
-            - Click on the **Add request header parameter** button
-            - Under **Name** type **Content-Type**
-            - Under **Mapped form** type **'application/x-amz-json-1.1'**
+                - For **Integration type** select **AWS Service**
+                - For **AWS Region** choose us-east-1
+                - For **AWS Service** select **Kinesis**
+                - For **HTTP method** select `POST`
+                - For **Action Type** select **User action name**
+                - For **Action name** type `DeleteStream`
+                - For **Execution role** you should use the same ARN as in the previous step
 
-            3. Expand the **Mapping Ttemplates** panel and select the following options:
+                Finally, click **Create method**. This will redirect you to the **Method Execution** page.
 
-            - Click on the **Add mapping template** button
-            - Under **Cotent-Type** type **application/json**
-            - In the **Template body** include the following: 
-            ```
-            {
-                "StreamName": "$input.params('stream-name')"
-            }
-            ```
-    C- Add records to streams in Kinesis
-        - Under the `{stream-name}` resource create a two new child resources with the **Resource Name**, `record` and `records`. For both resources create a `PUT` method.
-        - Setting up the record `PUT` method.
-            1. In the **Create method** page you will need to define the following:
+                2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
 
-            - For **Integration type** select **AWS Service**
-            - For **AWS Region** choose us-east-1
-            - For **AWS Service** select **Kinesis**
-            - For **HTTP method** select `POST`
-            - For **Action Type** select **User action name**
-            - For **Action name** type `PutRecord`
-            - For **Execution role** you should use the same ARN as in the previous step
+                - Click on the **Add request header parameter** button
+                - Under **Name** type **Content-Type**
+                - Under **Mapped form** type **'application/x-amz-json-1.1'**
 
-            Finally, click **Create method**. This will redirect you to the **Method Execution** page.
+                3. Expand the **Mapping Ttemplates** panel and select the following options:
 
-            2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
+                - Click on the **Add mapping template** button
+                - Under **Cotent-Type** type **application/json**
+                - In the **Template body** include the following: 
+                ```
+                {
+                    "StreamName": "$input.params('stream-name')"
+                }
+                ```
+        C- Add records to streams in Kinesis
+            - Under the `{stream-name}` resource create a two new child resources with the **Resource Name**, `record` and `records`. For both resources create a `PUT` method.
+            - Setting up the record `PUT` method.
+                1. In the **Create method** page you will need to define the following:
 
-            - Click on the **Add request header parameter** button
-            - Under **Name** type **Content-Type**
-            - Under **Mapped form** type **'application/x-amz-json-1.1'**
+                - For **Integration type** select **AWS Service**
+                - For **AWS Region** choose us-east-1
+                - For **AWS Service** select **Kinesis**
+                - For **HTTP method** select `POST`
+                - For **Action Type** select **User action name**
+                - For **Action name** type `PutRecord`
+                - For **Execution role** you should use the same ARN as in the previous step
 
-            3. Expand the **Mapping Ttemplates** panel and select the following options:
+                Finally, click **Create method**. This will redirect you to the **Method Execution** page.
 
-            - Click on the **Add mapping template** button
-            - Under **Cotent-Type** type **application/json**
-            - In the **Template body** include the following: 
-            ```
-            {
-                "StreamName": "$input.params('stream-name')",
-                "Data": "$util.base64Encode($input.json('$.Data'))",
-                "PartitionKey": "$input.path('$.PartitionKey')"
-            }
-            ```
-        - Setting up the records `PUT` method.
-            1. In the **Create method** page you will need to define the following:
+                2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
 
-            - For **Integration type** select **AWS Service**
-            - For **AWS Region** choose us-east-1
-            - For **AWS Service** select **Kinesis**
-            - For **HTTP method** select `POST`
-            - For **Action Type** select **User action name**
-            - For **Action name** type `PutRecords`
-            - For **Execution role** you should use the same ARN as in the previous step
+                - Click on the **Add request header parameter** button
+                - Under **Name** type **Content-Type**
+                - Under **Mapped form** type **'application/x-amz-json-1.1'**
 
-            Finally, click **Create method**. This will redirect you to the **Method Execution** page.
+                3. Expand the **Mapping Ttemplates** panel and select the following options:
 
-            2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
+                - Click on the **Add mapping template** button
+                - Under **Cotent-Type** type **application/json**
+                - In the **Template body** include the following: 
+                ```
+                {
+                    "StreamName": "$input.params('stream-name')",
+                    "Data": "$util.base64Encode($input.json('$.Data'))",
+                    "PartitionKey": "$input.path('$.PartitionKey')"
+                }
+                ```
+            - Setting up the records `PUT` method.
+                1. In the **Create method** page you will need to define the following:
 
-            - Click on the **Add request header parameter** button
-            - Under **Name** type **Content-Type**
-            - Under **Mapped form** type **'application/x-amz-json-1.1'**
+                - For **Integration type** select **AWS Service**
+                - For **AWS Region** choose us-east-1
+                - For **AWS Service** select **Kinesis**
+                - For **HTTP method** select `POST`
+                - For **Action Type** select **User action name**
+                - For **Action name** type `PutRecords`
+                - For **Execution role** you should use the same ARN as in the previous step
 
-            3. Expand the **Mapping Ttemplates** panel and select the following options:
+                Finally, click **Create method**. This will redirect you to the **Method Execution** page.
 
-            - Click on the **Add mapping template** button
-            - Under **Cotent-Type** type **application/json**
-            - In the **Template body** include the following: 
-            ```
-            {
-                "StreamName": "$input.params('stream-name')",
-                "Records": [
-                #foreach($elem in $input.path('$.records'))
-                    {
-                        "Data": "$util.base64Encode($elem.data)",
-                        "PartitionKey": "$elem.partition-key"
-                    }#if($foreach.hasNext),#end
-                    #end
-                ]
-            }
-            ```
+                2. From here select the **Integration Request** panel, and then **Edit**. Expand the **URL request headers parameters** panel and select the following options:
+
+                - Click on the **Add request header parameter** button
+                - Under **Name** type **Content-Type**
+                - Under **Mapped form** type **'application/x-amz-json-1.1'**
+
+                3. Expand the **Mapping Ttemplates** panel and select the following options:
+
+                - Click on the **Add mapping template** button
+                - Under **Cotent-Type** type **application/json**
+                - In the **Template body** include the following: 
+                ```
+                {
+                    "StreamName": "$input.params('stream-name')",
+                    "Records": [
+                    #foreach($elem in $input.path('$.records'))
+                        {
+                            "Data": "$util.base64Encode($elem.data)",
+                            "PartitionKey": "$elem.partition-key"
+                        }#if($foreach.hasNext),#end
+                        #end
+                    ]
+                }
+                ```
 - Send Events to Kinesis Streams
     - You can now send records to kinesis streams using the following code example:
     ```
